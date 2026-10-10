@@ -46,3 +46,21 @@ jobs:
 
       - name: Run security scan
         run: python -m bandit -r app.py
+  
+  docker:
+    name: Build and Test Docker Image
+    needs: [test, security]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t ironlog:ci .
+
+      - name: Test Docker container
+        run: |
+          output=$(printf '225\n5\n' | docker run --rm -i ironlog:ci)
+          echo "$output"
+          echo "$output" | grep -F "Estimated 1RM: 262.5 lbs"
