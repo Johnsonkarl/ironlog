@@ -63,6 +63,9 @@ jobs:
       - name: Test containerized API
         run: |
           docker run -d --name ironlog-ci -p 127.0.0.1:5000:5000 ironlog:ci
+          sleep 5
+          docker ps -a
+          docker logs ironlog-ci
 
           trap 'docker logs ironlog-ci 2>&1 || true; docker rm -f ironlog-ci' EXIT
 
