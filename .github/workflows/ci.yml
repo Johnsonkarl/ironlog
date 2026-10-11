@@ -64,7 +64,7 @@ jobs:
         run: |
           docker run -d --name ironlog-ci -p 127.0.0.1:5000:5000 ironlog:ci
 
-          trap 'docker rm -f ironlog-ci' EXIT
+          trap 'docker logs ironlog-ci 2>&1 || true; docker rm -f ironlog-ci' EXIT
 
           curl --fail --silent --show-error \
             --retry 10 --retry-connrefused --retry-delay 1 \
