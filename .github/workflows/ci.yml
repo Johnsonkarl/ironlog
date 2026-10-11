@@ -47,6 +47,7 @@ jobs:
       - name: Run security scan
         run: python -m bandit -r app.py
   
+  
   docker:
     name: Build and Test Docker Image
     needs: [test, security]
@@ -59,8 +60,19 @@ jobs:
       - name: Build Docker image
         run: docker build -t ironlog:ci .
 
-      - name: Test Docker container
+      - name: Test containerized API
         run: |
-          output=$(printf '225\n5\n' | docker run --rm -i ironlog:ci)
-          echo "$output"
-          echo "$output" | grep -F "Estimated 1RM: 262.5 lbs"
+          docker run -d --name ironlog-ci -p 127.0.0.1:5000:5000 ironlog:ci
+
+          trap 'docker rm -f ironlog-ci' EXIT
+
+          curl --fail --silent --show-error \
+            --retry 10 --retry-connrefused --retry-delay 1 \
+            http://127.0.0.1:5000/health
+
+          curl --fail --silent --show-error \
+            -H "Content-Type: application/json" \
+            -d '{"weight":225,"reps":5}' \
+            http://127.0.0.1:5000/calculate \
+            | python -c 'import json,sys; result=json.load(sys.stdin); assert result["estimated_1rm"] == 262.5; print("API smoke test passed")'
+
