@@ -1,9 +1,12 @@
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from app import calculate_one_rep_max
 
 app = Flask(__name__)
 
+@app.get("/")
+def home():
+    return render_template("index.html")
 
 @app.get("/health")
 def health():

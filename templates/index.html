@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IronLog</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>IronLog</h1>
+    <p>Your personal strength tracker</p>
+
+    <label>Weight (lbs):</label>
+    <input type="number" id="weight">
+
+    <label>Reps:</label>
+    <input type="number" id="reps">
+
+    <button id="calculate-btn">Calculate 1RM</button>
+
+    <p id="result"></p>
+    
+<script>
+    const button = document.getElementById("calculate-btn");
+
+    button.addEventListener("click", async function () {
+        const weight = Number(document.getElementById("weight").value);
+        const reps = Number(document.getElementById("reps").value);
+
+        const response = await fetch("/calculate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                weight: weight,
+                reps: reps
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById("result").textContent =
+                "Estimated 1RM: " + data.estimated_1rm + " lbs";
+        } else {
+            document.getElementById("result").textContent =
+                data.error || "Calculation failed";
+        }
+    });
+</script>
+
+</body>
+</html>

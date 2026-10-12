@@ -8,7 +8,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py api.py ./
-
+COPY templates/ ./templates/
+COPY static/ ./static
 USER 10001
 
 EXPOSE 5000

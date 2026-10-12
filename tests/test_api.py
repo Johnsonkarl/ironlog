@@ -32,3 +32,12 @@ def test_invalid_reps():
     })
 
     assert response.status_code == 400
+
+
+def test_homepage():
+    client = app.test_client()
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"IronLog" in response.data

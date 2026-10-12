@@ -45,7 +45,7 @@ jobs:
         run: python -m pip install bandit
 
       - name: Run security scan
-        run: python -m bandit -r app.py
+        run: python -m bandit -r app.py api.py
   
   
   docker:
@@ -70,17 +70,17 @@ jobs:
               if curl --fail --silent --output /dev/null \
                   --max-time 2 \
                   http://127.0.0.1:5000/health; then
-              
+
                   echo "IronLog is ready!"
                   break
               fi
-              
+
               if [ "$attempt" -eq 15 ]; then
                   echo "IronLog failed to become ready."
                   docker logs ironlog-ci
                   exit 1
               fi
-              
+
               sleep 1
           done
 
