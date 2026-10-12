@@ -50,7 +50,7 @@ jobs:
   
   docker:
     name: Build and Test Docker Image
-    needs: [test, security, dependency_scan]
+    needs: [test, security, dependency_scan, secret_scan]
     runs-on: ubuntu-latest
 
     steps:
