@@ -50,7 +50,7 @@ jobs:
   
   docker:
     name: Build and Test Docker Image
-    needs: [test, security]
+    needs: [test, security, dependency_scan]
     runs-on: ubuntu-latest
 
     steps:
@@ -142,3 +142,22 @@ jobs:
           done
 
           python -m pytest tests/test_browser.py -v
+  
+  dependency_scan:
+    name: Python Dependency Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pip-audit
+        run: python -m pip install pip-audit
+
+      - name: Audit dependencies
+        run: python -m pip_audit -r requirements.txt
